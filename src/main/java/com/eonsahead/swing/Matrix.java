@@ -3,8 +3,8 @@ package com.eonsahead.swing;
 /**
  * Model a matrix.
  *
- * @author Leon Tabak
- * @version 1 April 2020
+ * @author Logan Conley
+ * @version 5 April 2020
  */
 public class Matrix {
 

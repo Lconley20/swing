@@ -4,7 +4,7 @@ package com.eonsahead.swing;
  * Model a matrix.
  *
  * @author Logan Conley
- * @version 5 April 2020
+ * @version 15 April 2020
  */
 public class Matrix {
 
@@ -35,7 +35,7 @@ public class Matrix {
             } // for
         } // for
     } // identity()
-    
+
     public void rotationX(double angle) {
         this.identity();
         this.set(1, 1, Math.cos(angle));
@@ -43,7 +43,7 @@ public class Matrix {
         this.set(2, 1, Math.sin(angle));
         this.set(2, 2, Math.cos(angle));
     } // rotationX( double )
-    
+
     public void rotationY(double angle) {
         this.identity();
         this.set(0, 0, Math.cos(angle));
@@ -51,7 +51,7 @@ public class Matrix {
         this.set(2, 0, -Math.sin(angle));
         this.set(2, 2, Math.cos(angle));
     } // rotationY( double )
-    
+
     public void rotationZ(double angle) {
         this.identity();
         this.set(0, 0, Math.cos(angle));
@@ -59,24 +59,21 @@ public class Matrix {
         this.set(1, 0, Math.sin(angle));
         this.set(1, 1, Math.cos(angle));
     } // rotationZ( double )
-    
-    public void scale(double x, double y, double z) {
-       this.set(0, 0, x);
-       this.set(1, 1, y);
-       this.set(2, 2, z);
+
+    public void scale(double xFactor, double yFactor, double zFactor) {
+        this.identity();
+        this.set(0, 0, xFactor);
+        this.set(1, 1, yFactor);
+        this.set(2, 2, zFactor);
     } // scale( double, double, double )
-    
-    public void translate(double x, double y, double z) {
-        Vector v = new Vector(x, y, z);
-        for (int row = 0; row < 4; row++) {
-            for (int column = 0; column < 4; column++) {
-                double temp = this.get(row, column);
-                temp = temp + v.get(row);
-                this.set(row, column, temp);                
-            }// for
-        }// for
-    }// translate( double, double, double)
-    
+
+    public void translate(double deltaX, double deltaY, double deltaZ) {
+        this.identity();
+        this.set(0, 3, deltaX);
+        this.set(1, 3, deltaY);
+        this.set(2, 3, deltaZ);
+    } // translate( double, double, double )
+
     public Matrix multiply(Matrix otherMatrix) {
         Matrix product = new Matrix();
         for (int row = 0; row < 4; row++) {
@@ -91,30 +88,34 @@ public class Matrix {
         } // for
         return product;
     } // multiply( Matrix )
-    
+
     public Vector multiply(Vector v) {
-        Vector result = new Vector();
-        double product = 0.0;
-        
-        for (int row = 0; row < 4; row++) {
-            int m = row;
-            for (int column = 0; column < 4; column++) {
-                product += this.get(row, column) * v.get(m);
-            }// for
-            result.set(product, m);
-        }// for
-        
-        return result;
-    }// multiply( Vector )
+        double x = 0.0;
+        for (int i = 0; i < 3; i++) {
+            x += this.get(0, i) * v.get(i);
+        } // for
+
+        double y = 0.0;
+        for (int i = 0; i < 3; i++) {
+            y += this.get(1, i) * v.get(i);
+        } // for
+
+        double z = 0.0;
+        for (int i = 0; i < 3; i++) {
+            z += this.get(2, i) * v.get(i);
+        } // for
+
+        return new Vector(x, y, z);
+    } // multiply( Vector )
 
     private String rowToString(int row) {
         StringBuilder result = new StringBuilder();
         result.append("( ");
         for (int i = 0; i < 3; i++) {
-            result.append(this.get( row, i));
+            result.append(this.get(row, i));
             result.append(",");
         } // for
-        result.append(this.get( row, 3 ));
+        result.append(this.get(row, 3));
         result.append(" )");
         return result.toString();
     } // rowToString( int )
